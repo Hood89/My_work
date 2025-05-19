@@ -1,0 +1,9 @@
+import string 
+phrase = "Le ciel est, bleu. et le, soleil. est chaud"
+b = str.maketrans('', '', string.punctuation)
+
+clean = phrase.translate(b)
+verify = clean.lower().split()
+
+res = set(verify)
+print(len(res))
