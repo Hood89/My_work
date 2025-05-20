@@ -1,0 +1,35 @@
+Programme 1 ** une calculatrice 
+print("*** CALCULATOR ***")
+keep_going = True
+while keep_going:
+    print()
+    symboles = input("Pick an operator (* / - +): ")
+    try:
+        number1 = float(input("Enter the first number: "))
+        number2 = float(input("Enter the second number: "))
+        if symboles == "*":
+            total = number1 * number2
+        elif symboles == "-":
+            total = number1 - number2
+        elif symboles == "+":
+            total = number1 + number2
+        elif symboles == "/":
+            if number2 == 0:
+                raise ZeroDivisionError
+            total = number1 / number2
+        else:
+            print("Invalid operator.")
+            continue
+
+        print(f"The result of {number1} {symboles} {number2} is: {total}")
+
+    except ValueError:
+        print("Enter only valid numbers.")
+    except ZeroDivisionError:
+        print("You can't divide by zero.")
+
+    print()
+    retry = input("Try again? (yes/no): ").lower()
+    if retry == "no":
+        keep_going = False
+       
