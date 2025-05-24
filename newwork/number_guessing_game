@@ -1,0 +1,118 @@
+import random 
+
+print("""
+=============================================
+            MISSION: GUESS THE SECRET NUMBER       
+=============================================
+
+• The computer has chosen a number between 1 and 100
+• Each round, you must guess 4 different numbers
+• Response: 'YES' if correct, 'NO' otherwise
+• Find the number before you run out of attempts
+
+                Let's Jump In!
+=============================================
+""")
+
+start_game = input("Do you want to start the game? (y / n): ").strip().lower()
+if start_game == "n":
+    print("Alright, maybe next time!")
+    quit()
+
+while True:
+    secret_number = random.randint(1, 100)
+
+    easy_level = 13
+    hard_level = 7
+    expert_level = 5
+
+    print("\nChoose your difficulty level:")
+    print("1. Easy (10 attempts)")
+    print("2. Hard (7 attempts)")
+    print("3. Expert (5 attempts)")
+    print("4. Quit the game\n")
+
+    try:
+        level_choice = int(input("Your choice (1/2/3/4): "))
+    except ValueError:
+        print("Invalid input. Please enter a number between 1 and 4.")
+        continue
+
+    if level_choice == 1:
+        max_attempts = easy_level
+        print("\nYou have 10 attempts to find the correct number.")
+    elif level_choice == 2:
+        max_attempts = hard_level 
+        print("\nYou have 5 attempts to find the correct number.")
+    elif level_choice == 3:
+        max_attempts = expert_level 
+        print("\nYou have 3 attempts to find the correct number.")
+    elif level_choice == 4:
+        print("See you next time!")
+        quit()
+    else:
+        print("Invalid choice. Please try again.")
+        continue
+
+    print("\n---------------------------------------------")
+    print("Now, you will enter 4 numbers each round.")
+    print("Good luck!")
+    print("---------------------------------------------\n")
+
+    attempts = 0
+    used_number = set()
+    
+    while attempts < max_attempts:
+        guesses = []
+
+        try:
+            for i in range(1, 5):
+                while True:
+                    number = int(input(f"Enter number {i}/4: "))
+                    
+                    if number in guesses:
+                        print(f"\nYou already entered the number {number} in this round. Try a different one.\n")
+                    
+                    elif number in used_number:
+                        print(f"\nYou already tried the number {number} in a **previous round**.")
+                        confirm = input("Do you still want to use it again in this round? (y = yes / n = no): ").strip().lower()
+                        if confirm == "y":
+                            guesses.append(number)
+                            used_number.add(number)
+                            print(f"{number} accepted.\n")
+                            break
+                        else:
+                            print("Okay, please choose a different number.\n")
+                            continue
+                    else:
+                        guesses.append(number)
+                        used_number.add(number)
+                        break
+        except ValueError:
+            print("Invalid input. Please enter only numbers.")
+            continue
+
+        if secret_number in guesses:
+            print("\n=============================================")
+            print(f"     CONGRATULATIONS! You found the number: {secret_number}")
+            print(f"     Your guesses this round: {guesses}")
+            print("=============================================\n")
+            break
+        else:
+            attempts += 1
+            print(f"\nNOPE! The number is not in {guesses}.")
+            if attempts < max_attempts:
+                print(f"You have {max_attempts - attempts} attempt(s) left.\n")
+            else:
+                print("\n=============================================")
+                print("     GAME OVER!")
+                print(f"     You've used all your attempts. The secret number was: {secret_number}")
+                print("=============================================\n")
+
+    print("\n=============================================")
+    play_again = input("Do you want to play again? (y / n): ").strip().lower()
+    if play_again != "y":
+        print("\nThanks for playing! See you next time!")
+        break
+    print("=============================================\n")
+    print("Get ready for a new challenge...\n")
