@@ -1,0 +1,156 @@
+import random  # Import the random module to select random words and categories
+
+# Function to get a random word, its category, and the number of attempts based on difficulty
+def get_random_word_and_hint(difficulty):
+    # Dictionary of categories and their associated word lists
+    categories = {
+        "fruits": ["apple", "banana", "orange", "strawberry", "pineapple", "mango", "watermelon", "grape", "kiwi", "peach", "pear", "cherry", "blueberry", "raspberry", "lemon", "lime", "coconut", "papaya", "avocado", "pomegranate"],
+        "animals": ["lion", "tiger", "elephant", "giraffe", "zebra", "monkey", "dolphin", "penguin", "kangaroo", "koala", "panda", "wolf", "fox", "bear", "deer", "crocodile", "owl", "eagle", "shark", "turtle"],
+        "colors": ["red", "blue", "green", "yellow", "orange", "purple", "pink", "brown", "black", "white", "gray", "gold", "silver", "turquoise", "magenta", "cyan", "maroon", "indigo", "beige", "lavender"],
+        "countries": ["france", "germany", "italy", "spain", "canada", "japan", "australia", "brazil", "india", "mexico", "egypt", "greece", "sweden", "norway", "argentina", "south africa", "thailand", "vietnam", "portugal", "netherlands"],
+        "cars": ["toyota", "honda", "ford", "chevrolet", "bmw", "mercedes", "audi", "tesla", "porsche", "ferrari", "lamborghini", "jeep", "subaru", "volkswagen", "nissan", "hyundai", "kia", "mazda", "lexus", "volvo"]
+    }
+
+    # Randomly select a category
+    chosen_category = random.choice(list(categories.keys()))
+    full_list = categories[chosen_category]
+
+    # Filter words and set attempts based on difficulty
+    if difficulty == "easy":
+        words = [w for w in full_list if len(w) <= 5]
+        attempts = 12
+    elif difficulty == "hard":
+        words = [w for w in full_list if len(w) >= 8]
+        attempts = 6
+    else:
+        words = full_list
+        attempts = 8
+
+    # Choose a random word from the filtered list
+    word = random.choice(words)
+    return word, chosen_category, attempts
+
+# Function to run a single round of the game
+def play_game(player_name):
+    # Ask the player to select a difficulty level
+    print("\nChoose your difficulty level:")
+    print("1. Easy 🌱")
+    print("2. Hard 🔥")
+    print("3. Expert ⚔️")
+
+    # Get user input for difficulty
+    difficulty_input = input("Enter your choice (1 / 2 / 3): ").strip()
+    if difficulty_input == "1":
+        difficulty = "easy"
+    elif difficulty_input == "2":
+        difficulty = "hard"
+    else:
+        difficulty = "medium"
+
+    # Get a word, its category, and allowed attempts
+    word, hint, attempts = get_random_word_and_hint(difficulty)
+    print(f"\n🕵️ Hint: The word is from the category *{hint.upper()}*")
+
+    user_guesses = ""  # Stores the letters the user has guessed
+    wrong_streak = 0   # Counts consecutive wrong guesses
+
+    # Game loop
+    while attempts > 0:
+        wrong = 0
+        print("\nWord: ", end="")
+
+        # Display the word with guessed letters revealed
+        for char in word:
+            if char == " ":
+              print(" ", end=" ")
+            
+            elif char in user_guesses:
+                print(char.upper(), end=" ")
+            else:
+                print("*", end=" ")
+                wrong += 1
+        print()
+
+        # Check if the word is fully guessed
+        if wrong == 0:
+            print(f"\n🎉 Congratulations {player_name}! You won! The word was '{word.upper()}'.")
+            break
+
+        # Get a letter from the player
+        while True:
+            guess = input("🔤 Enter a letter: ").strip().lower()
+            try:
+                if not guess.isalpha():
+                    raise ValueError("Only letters are allowed.")
+                if len(guess) != 1:
+                    raise ValueError("Please enter only a single letter.")
+                if guess in user_guesses:
+                    raise ValueError("You already guessed that letter.")
+                user_guesses += guess
+                break
+            except ValueError as e:
+                print(f"❗ Invalid input: {e}")
+
+        # Check if the guessed letter is incorrect
+        if guess not in word:
+            attempts -= 1
+            wrong_streak += 1
+            print(f"❌ Wrong guess! You have {attempts} attempts left.")
+
+        # Offer a hint if two consecutive wrong guesses
+        if wrong_streak == 2:
+            malus = input("🤔 Want a hint letter? (cost: -2 attempts) (y / n): ").strip().lower()
+            if malus == "y":
+                for w in word:
+                    if w not in user_guesses:
+                        print(f"💡 Here's a letter: '{w.upper()}'")
+                        user_guesses += w
+                        break
+                attempts -= 2
+            else:
+                print("✅ Keep trying!")
+            wrong_streak = 0  # Reset wrong streak
+
+        # If no attempts left, game over
+        if attempts == 0:
+            print(f"\n💀 Game Over, {player_name}. The word was '{word.upper()}'. Better luck next time!")
+
+# Main function that starts the game
+def main():
+    print("==============================================")
+    print("🌟🌟 WELCOME TO THE WORD GUESSING GAME 🌟🌟")
+    print("==============================================\n")
+
+    # Ask for player's name
+    name = input("What's your name, challenger? ").strip().title()
+    print(f"\n👋 Hello {name}! Get ready to test your brain and have fun!\n")
+
+    # Ask the user if they want to play
+    while True:
+        choice = input("🎮 Do you want to play? (y to play, n to quit): ").strip().lower()
+        if choice == "y":
+            break
+        elif choice == "n":
+            print("👋 Goodbye! Hope to see you again soon!")
+            return
+        else:
+            print("Invalid input, please pick (y) or (n) only")
+
+    # Game loop for replay
+    while True:
+        play_game(name)
+
+        # Ask if the user wants to play again
+        while True:
+            replay = input("\n🔁 Do you want to play again? (y / n): ").strip().lower()
+            if replay == "y":
+                break  # Start a new round
+            elif replay == "n":
+                print("👋 Thanks for playing! See you next time!")
+                return  # Exit the game
+            else:
+                print("Invalid input, please enter (y) or (n)")
+
+# Run the game
+if __name__ == "__main__":
+    main()
